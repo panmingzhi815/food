@@ -1,0 +1,148 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:v-class="http://www.w3.org/1999/xhtml" xmlns:v-bind="http://www.w3.org/1999/xhtml">
+<head>
+    <meta charset="UTF-8">
+    <title>首页</title>
+    <link rel="stylesheet" href="../easyui/themes/icon.css"/>
+    <link rel="stylesheet" href="../easyui/themes/material/easyui.css"/>
+    <script src="../easyui/jquery.min.js"></script>
+    <script src="../easyui/jquery.easyui.min.js"></script>
+    <script src="../easyui/vue.js"></script>
+
+</head>
+<body>
+<div id="order" class="easyui-layout" style="position:absolute;top: 5px;right: 5px;left: 5px;bottom: 5px;">
+    <div data-options="region:'north',border:false" style="height:100px;padding: 0 20px 0 0;background-color: #2b85e4;color: #fff;;border-radius: 10px">
+        <div style="float: left;">
+            <img src="../img/food.png" style="width: 95px;height: 95px;">
+        </div>
+        <div style="float: left;line-height: 95px;font-size: 35px;margin-left: 20px">
+            二快点餐平台
+        </div>
+
+        <div style="float: right;line-height: 95px;">
+            <a class="easyui-linkbutton"><span style="font-size: 30px">789</span></a>
+        </div>
+
+        <div style="float: right;line-height: 95px;font-size: 30px">
+            可入账：
+        </div>
+    </div>
+    <div id="orderInfoList" data-options="region:'west',split:true"
+         style="width:200px;text-align: center;font-weight: 800;background-color: #2b85e4;border-radius: 10px">
+        <p><a class="easyui-linkbutton" onclick="addFoodOrderName()"><img src="../img/add.png"
+                                                                          style="width: 80px;height: 80px;"></a>
+        <p v-for="c in orderNameList">
+            <a href="#" class="l-btn" style="font-size: 25px;width: 150px" @click="selectOrderInfo(c)">{{ c.orderName }}</a>
+        </p>
+    </div>
+    <div data-options="region:'center',iconCls:'icon-ok',border:false">
+        <div class="easyui-panel" style="width: 100%;height: 97%; margin: 10px;" border="false" data-options="footer:'#ft'">
+            <div v-for="f in foodList" @click="selectFood(f)" v-bind:class="[f.selected ? 'l-btn-plain-selected' : '']" style="width: 200px;text-align: center;border-radius: 10px;float:left;border: 1px silver solid;margin: 10px;padding: 10px">
+                <div style="font-size: 25px;">{{ f.foodName }}</div>
+                <div style="font-size: 25px;">{{ f.foodPrice }}</div>
+                <div>
+                    <a href="#" class="l-btn" style="width: 40px;font-size: 20px;">不辣</a>
+                    <a href="#" class="l-btn" style="width: 40px;font-size: 20px;">微辣</a>
+                    <a href="#" class="l-btn" style="width: 40px;font-size: 20px;">常辣</a>
+                </div>
+            </div>
+        </div>
+
+        <div id="ft" style="text-align: right;padding: 10px ">
+            <span style="font-size: 40px;padding-right: 70px">共计：{{ currentOrderInfo.orderPrice }} 元</span>
+            <a href="#" class="easyui-linkbutton" data-options="iconCls:'icon-large-smartart',size:'large',iconAlign:'top'">点餐完毕</a>
+            <a href="#" class="easyui-linkbutton" data-options="iconCls:'icon-large-chart',size:'large',iconAlign:'top'">付款完毕</a>
+        </div>
+    </div>
+
+    <div id="dlg" class="easyui-dialog" title="请输入号码牌(回车确认)" closed="true" style="width:350px;text-align: center;display: none">
+        <p>
+            <input id="foodOrderName" style="font-size: 50px;width:300px;" placeholder="请输入号码牌">
+        </p>
+    </div>
+</div>
+</body>
+</html>
+
+<script type="text/javascript">
+
+    $(function () {
+        $('#foodOrderName').keydown(function (e) {
+            var val = $('#foodOrderName').val();
+            if (e.keyCode === 13 && val.length > 0) {
+                vue.addOrderInfo(val);
+                $('#dlg').dialog('close');
+            } else if (e.keyCode === 27) {
+                $('#dlg').dialog('close');
+            }
+        });
+    });
+
+    function addFoodOrderName() {
+        $('#dlg').dialog('open');
+        $("#foodOrderName").val("");
+        $("#foodOrderName").focus();
+    }
+
+    var foodArr = [{
+        foodName: "青椒肉丝",
+        foodPrice: "20.0",
+        foodType: {footTypeName: "小炒"},
+        selected: false
+    },{
+        foodName: "青椒肉丝",
+        foodPrice: "20.0",
+        foodType: {footTypeName: "小炒"},
+        selected: false
+    },{
+        foodName: "青椒肉丝",
+        foodPrice: "20.0",
+        foodType: {footTypeName: "小炒"},
+        selected: false
+    },{
+        foodName: "青椒肉丝",
+        foodPrice: "20.0",
+        foodType: {footTypeName: "小炒"},
+        selected: false
+    },{
+        foodName: "青椒肉丝",
+        foodPrice: "20.0",
+        foodType: {footTypeName: "小炒"},
+        selected: false
+    }];
+
+    var vue = new Vue({
+        el: "#order",
+        data: {
+            currentOrderInfo:{
+                "orderName": "",
+                "orderPrice": 0
+            },
+            orderNameList: [],
+            foodList: []
+        },
+        methods: {
+            "addOrderInfo": function (name) {
+                this.foodList = [];
+                this.currentOrderInfo = {
+                    "orderName": name,
+                    "orderPrice": 0
+                };
+                this.orderNameList.push(this.currentOrderInfo);
+            },
+            "selectOrderInfo":function (c) {
+                this.foodList = foodArr;
+            },
+            "selectFood":function (f) {
+                f.selected = !f.selected;
+                this.currentOrderInfo.orderPrice = 0;
+                for(var i=0;i<this.foodList;i++){
+                    if(this.foodList[i].selected === true){
+                        this.currentOrderInfo.orderPrice += this.foodList[i].foodPrice;
+                    }
+                }
+            }
+        }
+    });
+</script>
